@@ -20,9 +20,10 @@ class Examples(SegmentationBase):
 
 # With semantic map and scene label
 class ADE20kBase(Dataset):
-    def __init__(self, config=None, size=None, random_crop=False, interpolation="bicubic", crop_size=None):
+    def __init__(self, config=None, size=None, random_crop=False, interpolation="bicubic", crop_size=None, coord=False):
         self.split = self.get_split()
         self.n_labels = 151 # unknown + 150
+        self.coord = coord        
         self.data_csv = {"train": "data/ade20k_train.txt",
                          "validation": "data/ade20k_test.txt"}[self.split]
         self.data_root = "data/ade20k_root"
@@ -95,14 +96,19 @@ class ADE20kBase(Dataset):
         segmentation = processed["mask"]
         onehot = np.eye(self.n_labels)[segmentation]
         example["segmentation"] = onehot
+
+        if self.coord == True:
+            h,w,_ = example["image"].shape
+            example["coord"] = np.arange(h*w).reshape(h,w,1)/(h*w)
+
         return example
 
 
 class ADE20kTrain(ADE20kBase):
     # default to random_crop=True
-    def __init__(self, config=None, size=None, random_crop=True, interpolation="bicubic", crop_size=None):
+    def __init__(self, config=None, size=None, random_crop=True, interpolation="bicubic", crop_size=None, coord=False):
         super().__init__(config=config, size=size, random_crop=random_crop,
-                          interpolation=interpolation, crop_size=crop_size)
+                          interpolation=interpolation, crop_size=crop_size, coord=coord)
 
     def get_split(self):
         return "train"

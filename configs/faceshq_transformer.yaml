@@ -14,7 +14,7 @@ model:
     first_stage_config:
       target: taming.models.vqgan.VQModel
       params:
-        ckpt_path: logs/2020-11-09T13-33-36_faceshq_vqgan/checkpoints/last.ckpt
+        ckpt_path: /content/drive/MyDrive/VQGAN/logs/2021-04-14T18-55-19_faceshq_vqgan/checkpoints/last.ckpt
         embed_dim: 256
         n_embed: 1024
         ddconfig:
@@ -46,16 +46,16 @@ data:
   target: main.DataModuleFromConfig
   params:
     batch_size: 2
-    num_workers: 8
+    num_workers: 2
     train:
-      target: taming.data.faceshq.FacesHQTrain
+      target: taming.data.ade20k.ADE20kTrain
       params:
         size: 256
-        crop_size: 256
+        crop_size: 240
         coord: True
     validation:
-      target: taming.data.faceshq.FacesHQValidation
+      target: taming.data.ade20k.ADE20kValidation
       params:
         size: 256
-        crop_size: 256
+        crop_size: 240
         coord: True
